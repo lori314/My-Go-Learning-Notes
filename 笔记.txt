@@ -1,0 +1,289 @@
+1.Go程序的基本组成：
+包声明 package
+引入包 import
+函数 func
+变量 
+语句 & 表达式
+注释 /* */
+
+大写字母开头的函数，变量，类是public的
+小写字母开头是protected 的
+
+执行：
+go run xxx.go 
+生成二进制文件：
+go build xxx.go
+#‘{’单独成行会报错
+
+2.语法部分：
+语句不需要像c一样以‘；’结尾
+可以用‘+’来连接字符串
+在关键字和表达式之间要使用空格。
+例如：
+if x > 0 {
+    // do something
+}
+
+fmt.Sprintf和fmt.Printf :
+Sprintf 根据格式化参数生成格式化的字符串并返回该字符串。
+Printf 根据格式化参数生成格式化的字符串并写入标准输出。
+格式化的写法与C语言类似
+
+3.数据类型：
+（1）布尔型：true 和 false
+(2)int,float32,float64，uint,complex(它们都可以加上数字来表示位数)
+(3)字符串
+(4)指针，数组，结构体等
+
+4.变量：
+变量定义：var <变量名> <变量类型>
+多变量：var <变量名>,<变量名> <变量类型>
+变量不赋初值默认为0（数值类型（包括complex64/128）为 0
+				布尔类型为 false
+				字符串为 ""（空字符串）
+				其它类型为 nil：）
+也可以根据值自行判断变量类型；
+还有 <变量名> := <变量值> 定义加赋值
+也可以a,b,c=1,2,3
+var a,b,c int = 1,2,3
+var (  // 这种因式分解关键字的写法一般用于声明全局变量
+    a int
+    b bool
+)
+局部变量定义了未使用会报错
+如果你想要交换两个变量的值，则可以简单地使用 a, b = b, a，两个变量的类型必须是相同。
+空白标识符——也被用于抛弃值，如值 5 在：_, b = 5, 7 中被抛弃。
+——实际上是一个只写变量，你不能得到它的值。
+
+5.常量：
+const <变量名> <type> = value
+const (
+	Unknown = 0
+	Famale = 1
+	Male = 2
+)
+
+# iota 特殊常量：const 语句块中的行索引
+iota 可以被用作枚举值：
+
+const (
+    a = iota
+    b = iota
+    c = iota
+)
+第一个 iota 等于 0，每当 iota 在新的一行被使用时，它的值都会自动加 1；所以 a=0, b=1, c=2 可以简写为如下形式：
+
+const (
+    a = iota
+    b
+    c
+)
+不以iota赋值的常量也会增加iota的值
+<< 左移  >>右移
+
+go语言中的所有运算符（算数，逻辑）都与C中相同
+
+6.语句
+条件运算符：if...else...
+if后的条件要（）
+switch
+#select 和switch类似，但是会随机执行一个case
+循环语句： for,break,continue,goto
+for i := 0; i < 10; i++ {
+            fmt.Println(<-c)
+        }
+函数：至少有个main函数
+格式：func [结构体名或结构体指针名，可使函数为特定对象调用] function_name( [parameter list] ) [return_types] {
+   函数体
+}#'[ ]'表示可选
+调用方式和其它语言一样
+
+可以通过函数返回多个值：
+func swap(x, y string) (string, string) {
+   return y, x
+}
+
+Go 语言程序中全局变量与局部变量名称可以相同，但是函数内的局部变量会被优先考虑。
+Go语言的递归格式与C语言中类似
+
+7.数组：
+定义格式：var arrayName [size]dataType
+初始化方法：1：var numbers = [5]int{1, 2, 3, 4, 5}
+		   2：numbers := [5]int{1, 2, 3, 4, 5}
+#Tip：Go语言中不同长度的数组是不同的类型
+如果数组长度不确定，可以使用 ... 代替数组的长度，编译器会根据元素个数自行推断数组的长度：
+	balance := [...]float32{1000.0, 2.0, 3.4, 7.0, 50.0}
+还可以根据索引执行初始化：
+	//  将索引为 1 和 3 的元素初始化
+	balance := [5]float32{1:2.0,3:7.0}
+访问方式：a=array[index]
+
+8.指针：
+‘&’用于取地址
+指针变量的声明格式：var <变量名> *var-type
+nil是Go语言中的空指针
+
+9.结构体：
+定义格式：type struct_variable_type struct {
+   			member definition
+   			member definition
+   			...
+   			member definition
+		}
+eg: type Books struct {
+   title string
+   author string
+   subject string
+   book_id int
+}
+定义变量：variable_name := structure_variable_type {value1, value2...valuen}
+或
+variable_name := structure_variable_type { key1: value1, key2: value2..., keyn: valuen}
+
+用'.'来访问属性
+指针在函数，指针上的使用方式与C相同，但是‘->’直接用‘. ’
+
+10.切片（Slice）：
+定义格式：var identifier []type //未指定大小的数组
+make() 函数来创建切片: var slice1 []type = make([]type, len)
+也可以简写为 slice1 := make([]type, len)
+capacity是可选参数
+#这里 len 是数组的长度并且也是切片的初始长度
+
+初始化方法：s :=[] int {1,2,3 } 
+		s := arr[startIndex:endIndex] （对数组arr的引用）
+
+内置函数：
+len() 获取字符串，数组，切片的长度
+cap() 获取切片最长可以到多少
+空的切片的值为nil
+append() 向切片追加新元素：
+ numbers = append(numbers, 1)
+   printSlice(numbers)
+copy(numbers1,numbers2)将2复制到1
+
+11.range():
+range 关键字用于 for 循环中迭代数组(array)、切片(slice)、通道(channel)或集合(map)的元素。在数组和切片中它返回元素的索引和索引对应的值，在集合中返回 key-value 对。
+for key, value := range oldMap {
+    newMap[key] = value
+}
+如果不需要key或value可以用——占位
+
+   Map 映射：
+创建Map：
+定义格式：map_variable := make(map[KeyType]ValueType, initialCapacity)
+// 创建一个空的 map，key 是 int 类型，value 是 float32 类型
+    map1 := make(map[int]float32) 作用类似于python中的字典，不指定Map会自动扩容
+
+直接创建：
+m := map[string]int{
+    "apple": 1,
+    "banana": 2,
+    "orange": 3,
+}
+
+删除操作：
+// 删除键值对
+delete(m, "banana")
+
+Channel 通道：
+func main() {
+    ch := make(chan int, 2)
+    ch <- 1
+    ch <- 2
+    close(ch)
+   
+    for v := range ch {
+        fmt.Println(v)
+    }
+}
+
+12.类型转换：
+格式：typeName(expression)
+另一格式：var str string = "10"
+		var num int
+		num, _ = strconv.Atoi(str)
+以上代码将字符串变量 str 转换为整型变量 num。
+注意，strconv.Atoi 函数返回两个值，第一个是转换后的整型值，第二个是可能发生的错误，我们可以使用空白标识符 _ 来忽略这个错误（"strconv"需要import）
+
+strconv.Itoa(num)整数转字符串
+num, err := strconv.ParseFloat(str, 64) #字符串转浮点数
+strconv.FormatFloat(num, 'f', 2, 64)浮点数转字符串
+#接口类型转换：
+package main
+
+import "fmt"
+
+func main() {
+    var i interface{} = "Hello, World"
+    str, ok := i.(string) //返回两个值，后者表示转换是否成功，这句话将接口i转化为了字符串赋值给str
+    if ok {
+        fmt.Printf("'%s' is a string\n", str)
+    } else {
+        fmt.Println("conversion failed")
+    }
+}
+
+
+
+
+
+
+13.接口：
+定义格式：
+type interface_name interface {
+   method_name1 [接收类型] [return_type]
+   method_name2 [接收类型] [return_type]
+   method_name3 [接收类型] [return_type]
+   ...
+   method_namen [接收类型] [return_type]
+}
+相当于方法的集成，每一个method都需要在后面的语句中定义，但不限位置
+同一个接口可以指定不同的类型作为输入，然后调用可以同名的不同函数
+
+14.error:
+type error interface {
+    Error() string
+}(本身为内置的接口类型)
+errors.New(string) 用于返回错误信息
+
+
+
+########Go 并发########
+goroutine:
+goroutine 是轻量级线程，goroutine 的调度是由 Golang 运行时进行管理的。
+goroutine 语法格式：go 函数名( 参数列表 )
+例如：
+go f(x, y, z)
+开启一个新的 goroutine:
+f(x, y, z)
+
+Go 允许使用 go 语句开启一个新的运行期线程， 即 goroutine，以一个不同的、新创建的 goroutine 来执行一个函数。 同一个程序中的所有 goroutine 共享同一个地址空间。
+即go f(x,y,z)会以另一线程来运行f(x,y,z),与f(x,y,z)不冲突
+
+channel:
+定义格式：ch := make(chan int，[缓存区大小，在这里是几个int])
+表明通道接收int类型的数据
+带缓冲区的通道允许发送端的数据发送和接收端的数据获取处于异步状态，就是说发送端发送的数据可以放在缓冲区里面，可以等待接收端去获取数据，而不是立刻需要接收端去获取数据。
+
+Go 通过 range 关键字来实现遍历读取到的数据，类似于与数组或切片。格式如下：
+	v, ok := <-ch
+如果通道接收不到数据后 ok 就为 false，这时通道就可以使用 close() 函数来关闭。
+
+Select:
+select {
+        case c <- x:
+            x, y = y, x+y
+        case <-quit:
+            fmt.Println("quit")
+            return
+        }
+可以在c，quit两个通道之间等待
+
+并发编程小结
+Goroutines 是轻量级线程，使用 go 关键字启动。
+Channels 用于 goroutines 之间的通信。
+Select 语句 用于等待多个 channel 操作。
+
+
+
