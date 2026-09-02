@@ -1,105 +1,150 @@
-# 我的Go语言学习笔记 (Go Language Cookbook)
+# Go 学习笔记
 
-## 👋 关于这个仓库
+这是我刚开始学习 Go 时留下来的笔记和几段练习代码。内容从最基本的语法一路记到 goroutine、channel 和 select，整体更像一份随学随记的速查表，不是完整教程。
 
-你好！欢迎来到我的Go语言学习笔记仓库。
+原始笔记放在：
 
-这个仓库是我在学习和探索Go语言过程中，沉淀下来的一份**系统性的知识总结**。它更像一本我为自己编写的**技术手册**，旨在将Go语言的核心概念，从基础语法到其精髓——并发编程，进行结构化的梳理和归纳。
+```text
+笔记.txt
+```
 
-这份笔记记录了我对Go语言设计哲学的理解，尤其是在**简洁性、高效并发和工程化**方面的思考。
+代码练习放在：
 
----
+```text
+codes/
+```
 
-## 📒 知识图谱 (Table of Contents)
+这次整理时主要修正了几处早期理解不准确的地方，笔记原来的顺序和写法基本保留。
 
-我将我的学习笔记分成了以下几个核心模块：
+## 目前记到的内容
 
-### **1. Go程序基础**
-*   **基本结构:** `package`, `import`, `func main`
-*   **可见性规则:** 大写字母开头的标识符为`public`，小写为`protected`。
-*   **执行与编译:** `go run` (直接执行) vs. `go build` (编译成二进制文件)。
+### 基础语法
 
-### **2. 核心语法与数据类型**
-*   **语句与格式:**
-    *   语句末尾**无需**分号`;`。
-    *   `{`必须与`if`/`for`/`func`等关键字在同一行。
-    *   字符串拼接使用`+`。
-    *   `fmt.Sprintf` (返回字符串) vs. `fmt.Printf` (打印到标准输出)。
-*   **基础数据类型:**
-    *   布尔型: `bool` (`true`, `false`)
-    *   数值类型: `int`, `float64`, `uint`, `complex128` (支持不同位数)
-    *   字符串: `string`
-    *   派生类型: `指针`, `数组`, `结构体`
+包括：
 
-### **3. 变量与常量**
-*   **变量声明:**
-    *   标准声明: `var name type`
-    *   类型推断: `var name = value`
-    *   短变量声明: `name := value` (只能在函数内部使用)
-*   **零值 (Zero Value):** 未初始化的变量默认为其类型的零值（数值为0, bool为false, string为"", 指针/接口/切片等为`nil`）。
-*   **多变量赋值与交换:** 支持`a, b = 1, 2`和`a, b = b, a`。
-*   **空白标识符 `_`:** 用于丢弃不需要的值。
-*   **常量 (`const`):**
-    *   使用`const`关键字声明。
-    *   支持`iota`特殊常量，用于创建枚举值，每换一行自动递增。
+- `package`、`import`、`func main`
+- `go run` 和 `go build`
+- 变量、常量和零值
+- `iota`
+- `if`、`switch`、`for`
+- 多返回值
+- 类型转换
 
-### **4. 流程控制与函数**
-*   **条件语句:** `if-else` 和 `switch`。`switch`无需`break`，默认不穿透。
-*   **`select`语句:** 类似`switch`，但用于处理`channel`操作，会**随机**执行一个可运行的`case`。
-*   **循环语句:** 只有`for`循环，支持多种形式（类`while`、无限循环、`for-range`）。
-*   **函数 (`func`):**
-    *   支持**多返回值**。
-    *   支持将函数绑定到**结构体**（即“方法”）。
-    *   递归函数的实现。
+Go 的可见性规则和 Java/C++ 不太一样。包级标识符首字母大写表示 **exported**，可以被其他包访问；首字母小写表示只在当前包内可见。Go 本身没有 `public / protected / private` 这些访问修饰符。
 
-### **5. 复合数据结构**
-*   **数组 (`Array`):**
-    *   `var arr [5]int`
-    *   **值类型**，长度是其类型的一部分（`[5]int`和`[10]int`是不同类型）。
-*   **切片 (`Slice`):**
-    *   **引用类型**，是对底层数组的视图。
-    *   声明: `var s []int`
-    *   创建: `s := make([]int, len, cap)`
-    *   核心操作: `len()`, `cap()`, `append()`, `copy()`。
-*   **Range:**
-    *   用于遍历`array`, `slice`, `map`, `channel`。
-*   **Map:**
-    *   **引用类型**，键值对集合。
-    *   创建: `m := make(map[string]int)`
-    *   操作: `delete(m, key)`。
+## 数组、Slice 和 Map
 
-### **6. 指针、结构体与接口**
-*   **指针 (`Pointer`):**
-    *   `&`取地址，`*`解引用。
-    *   与C不同，Go不支持指针运算。
-*   **结构体 (`struct`):**
-    *   自定义的数据类型，用于聚合字段。
-    *   访问成员使用`.`，即使是指针类型也一样（语法糖）。
-*   **接口 (`interface`):**
-    *   非侵入式接口，一个类型只要实现了接口中定义的所有方法，就被视为实现了该接口。
-    *   `error`是Go中一个重要的内置接口类型。
-    *   支持**类型断言** (`val, ok := i.(TypeName)`)来判断和转换接口类型。
+笔记里分别记录了数组、slice、map 和 `range` 的基本用法。
 
-### **7. Go的精髓：并发编程 (Concurrency)**
+数组是值类型，而且长度属于数组类型的一部分：
 
-Go语言在语言层面内置了对并发的支持，这是其最大的特色之一。
+```go
+var a [5]int
+var b [10]int
+```
 
-*   **Goroutine:**
-    *   由Go运行时管理的**轻量级线程**。
-    *   创建成本极低，可以轻松创建成千上万个。
-    *   使用`go`关键字启动：`go myFunction()`。
+这里 `a` 和 `b` 的类型不同。
 
-*   **通道 (`Channel`):**
-    *   Goroutine之间进行**通信和同步**的主要方式，是并发安全的消息队列。
-    *   创建: `ch := make(chan int)` (无缓冲) 或 `ch := make(chan int, 10)` (带缓冲)。
-    *   操作: `ch <- value` (发送), `value := <-ch` (接收)。
-    *   可以使用`for v := range ch`来遍历一个关闭的通道。
+Slice 更像是对底层数组一段区间的描述：
 
-*   **Select:**
-    *   `select`语句可以同时等待**多个Channel**操作。
-    *   它会阻塞，直到其中一个`case`可以执行，如果多个`case`同时就绪，则**随机选择一个**执行。
-    *   `default`子句可以实现非阻塞操作。
+```go
+s := make([]int, 5, 10)
+t := arr[2:6]
+```
 
----
+赋值或切片后可能继续共享同一个底层数组，所以修改元素时需要注意这种共享关系。
 
-*这份笔记是我个人学习Go语言的总结，它帮助我构建了对这门语言“大道至简”的设计哲学和强大并发模型的理解。*
+Map 也有类似的共享语义：
+
+```go
+m := make(map[string]int)
+m["apple"] = 1
+delete(m, "apple")
+```
+
+## 指针、结构体和接口
+
+笔记里还记录了：
+
+- `&` 取地址和 `*` 解引用；
+- Go 不支持指针算术；
+- struct 的定义和成员访问；
+- interface 的隐式实现；
+- 类型断言；
+- 内置 `error` 接口。
+
+接口不要求类型显式声明“implements”。只要一个类型具有接口要求的全部方法，就可以赋给该接口。
+
+## Goroutine
+
+Go 的并发部分是我当时最后学到的一块。
+
+Goroutine 是由 Go runtime 调度的轻量级并发执行单元：
+
+```go
+go f(x, y, z)
+```
+
+它不是简单地“一条 goroutine 对应一条操作系统线程”，runtime 会负责 goroutine 的调度。
+
+## Channel
+
+Channel 用来在 goroutine 之间传递数据，也能起到同步作用：
+
+```go
+ch := make(chan int)
+
+ch <- 1
+v := <-ch
+```
+
+也可以创建带缓冲的 channel：
+
+```go
+ch := make(chan int, 10)
+```
+
+接收时常见的写法是：
+
+```go
+v, ok := <-ch
+```
+
+只有当 channel 已关闭，并且缓冲数据也读取完以后，`ok` 才会变成 `false`。通常由发送方在确定不会继续发送时关闭 channel。
+
+## Select
+
+`select` 用来同时等待多个 channel 操作：
+
+```go
+select {
+case x := <-ch1:
+    fmt.Println(x)
+case ch2 <- value:
+    // send
+default:
+    // optional non-blocking branch
+}
+```
+
+如果多个 case 同时可以执行，会从这些就绪 case 中选择一个；如果没有 case 可以执行，默认会阻塞，除非写了 `default`。
+
+## 代码练习
+
+`codes/` 里只有几段刚学 Go 时写的小程序：
+
+```text
+helloworld.go   Hello World
+a+b.go          输入两个整数求和
+cal_n.go        for 循环和函数练习
+test.go         自定义 error + Newton 法求平方根
+```
+
+运行单个文件例如：
+
+```bash
+cd codes
+go run helloworld.go
+```
+
+`codes/go.mod` 记录的是当时使用的 Go 版本。

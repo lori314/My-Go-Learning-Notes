@@ -1,0 +1,13 @@
+# Go build output
+/bin/
+*.exe
+*.test
+*.out
+
+# Editor / OS files
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
